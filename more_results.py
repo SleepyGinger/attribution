@@ -51,10 +51,7 @@ def extend_results(og_df, results):
     new_results=np.concatenate([[binary(results_array), raw(results_array), scaler(results_array), L2_norm(results_array), minmaxscaler(results_array)], dummy(results_array)])
     new_df=np.transpose(pd.DataFrame(new_results))
     new_df.columns=['result_binary', 'result_raw', 'result_scaler', 'result_L2_norm', 'result_minmaxscaler', 'result_dummy']
-    try:
-        df=df.reset_index()
-        extended_df=pd.concat([og_df, new_df], axis=1)
-    except:
-        extended_df=pd.concat([og_df, new_df], axis=1)
+    og_df=og_df.reset_index(drop=True)
+    extended_df=pd.concat([og_df, new_df], axis=1, join='inner')
 
     return extended_df
