@@ -2,10 +2,19 @@ import pandas as pd
 import numpy as np
 
 from sklearn import preprocessing
+from sklearn import datasets
+
+from sklearn.preprocessing import OneHotEncoder
 
 
-def extend_results(og_df, results):
+def extend_results(og_df, results, OneHotEncoder=False):
+    
     results_array = og_df[results]
+    
+    if OneHotEncoder==True:
+        le = preprocessing.LabelEncoder()
+        og_df = og_df.loc[:,og_df.columns != results].apply(le.fit_transform)
+        og_df[results] = results_array
     
     def raw(results_array):
         raw = np.array(results_array)
@@ -47,6 +56,7 @@ def extend_results(og_df, results):
         dum = pd.DataFrame(results_array).apply(le.fit_transform)
     
         return dum.values.T.tolist()
+
 
     new_results=np.concatenate([[binary(results_array), raw(results_array), scaler(results_array), L2_norm(results_array), minmaxscaler(results_array)], dummy(results_array)])
     new_df=np.transpose(pd.DataFrame(new_results))
