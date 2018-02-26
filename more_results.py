@@ -10,11 +10,22 @@ from sklearn.preprocessing import OneHotEncoder
 def extend_results(og_df, results, OneHotEncoder=False):
     
     results_array = og_df[results]
+
+    #grabbing just columns with words (objects)
+    object_colms = []
+    other_colms = []
+
+    for (colm_type,col) in zip(og_df.dtypes, list(og_df)):
+        if colm_type == object:
+            object_colms.append(col)
+        else:
+            other_colms.append(col)
+
     
     if OneHotEncoder==True:
         le = preprocessing.LabelEncoder()
-        og_df = og_df.loc[:,og_df.columns != results].apply(le.fit_transform)
-        og_df[results] = results_array
+        obj_og_df = og_df[object_colms].apply(le.fit_transform)
+        og_df = pd.concat([og_df[other_colms], obj_og_df], axis=1)
     
     def raw(results_array):
         raw = np.array(results_array)
