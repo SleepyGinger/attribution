@@ -47,8 +47,9 @@ def extend_results(og_df, results, OneHotEncoder=False):
                 
     def minmaxscaler(results_array):
         min_max_scaler = preprocessing.MinMaxScaler()
-        standardized = min_max_scaler.fit_transform(results_array)
-        
+        standardized = min_max_scaler.fit_transform(results_array.values.reshape(-1,1))
+        standardized=standardized.reshape(-1)
+
         return standardized
     
     def L2_norm(results_array):
@@ -69,7 +70,7 @@ def extend_results(og_df, results, OneHotEncoder=False):
         return dum.values.T.tolist()
 
 
-    new_results=np.concatenate([[binary(results_array), raw(results_array), scaler(results_array), L2_norm(results_array), minmaxscaler(results_array)], dummy(results_array)])
+    new_results=np.concatenate([[binary(results_array), raw(results_array), scaler(results_array), L2_norm(results_array)], minmaxscaler(results_array), dummy(results_array)])
     new_df=np.transpose(pd.DataFrame(new_results))
     new_df.columns=['result_binary', 'result_raw', 'result_scaler', 'result_L2_norm', 'result_minmaxscaler', 'result_dummy']
     og_df=og_df.reset_index(drop=True)
